@@ -110,6 +110,7 @@ function game() {
                 break;
         }
         console.log(`Round ${i+1}. Player: ${playerScore}, CPU: ${cpuScore}`)
+        console.log(' ')
     }
 
     if (playerScore === cpuScore) {
