@@ -9,6 +9,11 @@ function getComputerChoice() {
 function getPlayerSelection() {
     let playerChoice = prompt('Enter the name of your play or the corresponding number!\nRock (0), Paper (1), Scissors (2).\n\nWhat will you play?');
     
+    if (playerChoice === '') {
+        console.log('No input. Picking a random play.');
+        return legalPlays[Math.floor(Math.random() * 3)]
+    }
+
     // switch statements that convert input to a number
     let selection = null;
     switch (playerChoice.toLowerCase()) {
@@ -36,8 +41,8 @@ function getPlayerSelection() {
 
     // error case
     else {
-        console.log('Invalid input. Default to Rock.')
-        return legalPlays[0]
+        console.log('Invalid input. Picking a random play.');
+        return legalPlays[Math.floor(Math.random() * 3)]
     }
 
 }
@@ -87,7 +92,6 @@ function playGame (cpuChoice=getComputerChoice(), playerChoice=getPlayerSelectio
                 return 'tie'
         }
     }
-
 
     else {
         return 'wat'
