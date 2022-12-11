@@ -2,4 +2,4 @@
 
 My first JS project in Odin.
 
-TODO: Add a GUI
+TODID: Add a GUI
