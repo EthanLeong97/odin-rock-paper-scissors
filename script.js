@@ -1,66 +1,21 @@
-let legalPlays = ['Rock', 'Paper', 'Scissors'];
-
-
 function getComputerChoice() {
+    let legalPlays = ['Rock', 'Paper', 'Scissors'];
     randomNumber = Math.floor(Math.random() * 3);
     return legalPlays[randomNumber]
 }
 
-function getPlayerSelection() {
-    let playerChoice = prompt('Enter the name of your play or the corresponding number!\nRock (0), Paper (1), Scissors (2).\n\nWhat will you play?');
-    
-    if (playerChoice === '') {
-        console.log('No input. Picking a random play.');
-        return legalPlays[Math.floor(Math.random() * 3)]
-    }
-
-    // switch statements that convert input to a number
-    let selection = null;
-    switch (playerChoice.toLowerCase()) {
-        case 'rock':
-            selection = 0;
-            break;
-        case 'paper':
-            selection = 1;
-            break;
-        case 'scissors':
-            selection = 2;
-    }
-
-    // assign player selection if valid
-    if (selection != null) {
-        return legalPlays[selection]
-    }
-
-    // allow use of numbers by checking if input is 0, 1, or 2
-    if (!isNaN(playerChoice) && playerChoice >= 0 && playerChoice < 3) {
-        // convert to number and assign legalPlays
-        playerChoice = +playerChoice
-        return legalPlays[playerChoice]
-    }
-
-    // error case
-    else {
-        console.log('Invalid input. Picking a random play.');
-        return legalPlays[Math.floor(Math.random() * 3)]
-    }
-
-}
-
-// defined both functions and use as default parameters 
-function playGame (cpuChoice=getComputerChoice(), playerChoice=getPlayerSelection()) {
-
-    // if for each player choice. switch nested for each possible computer choice
+// here we intentionally invoke the default parameter because we want the return value, not the function itself
+function playRound (playerChoice, cpuChoice=getComputerChoice()) {
     if (playerChoice === 'Rock') {
         switch (cpuChoice) {
             case 'Rock':
-                console.log('Rock vs. Rock. Tie!');
+                text.textContent = 'Rock vs. Rock. Tie!';
                 return 'tie'
             case 'Paper':
-                console.log('Paper beats Rock. You lose!');
+                text.textContent = 'Paper beats Rock. You lose!';
                 return 'lose'
             case 'Scissors':
-                console.log('Scissors loses to Rock. You Win!');
+                text.textContent = 'Scissors loses to Rock. You Win!';
                 return 'win'
         }
     }
@@ -68,13 +23,13 @@ function playGame (cpuChoice=getComputerChoice(), playerChoice=getPlayerSelectio
     else if (playerChoice === 'Paper') {
         switch (cpuChoice) {
             case 'Rock':
-                console.log('Rock loses to paper. You Win!');
+                text.textContent = 'Rock loses to paper. You Win!';
                 return 'win'
             case 'Paper':
-                console.log('Paper vs. Paper. Tie!');
+                text.textContent = 'Paper vs. Paper. Tie!';
                 return 'tie'
             case 'Scissors':
-                console.log('Scissors beats Paper. You Lose!');
+                text.textContent = 'Scissors beats Paper. You Lose!';
                 return 'lose'
         }
     }
@@ -82,13 +37,13 @@ function playGame (cpuChoice=getComputerChoice(), playerChoice=getPlayerSelectio
     else if (playerChoice === 'Scissors') {
         switch (cpuChoice) {
             case 'Rock':
-                console.log('Rock beats Scissors. You Lose!');
+                text.textContent = 'Rock beats Scissors. You Lose!';
                 return 'lose'
             case 'Paper':
-                console.log('Paper loses to Scissors. You Win!');
+                text.textContent = 'Paper loses to Scissors. You Win!';
                 return 'win'
             case 'Scissors':
-                console.log('Scissors vs. Scissors. Tie!');
+                text.textContent = 'Scissors vs. Scissors. Tie!';
                 return 'tie'
         }
     }
@@ -98,13 +53,28 @@ function playGame (cpuChoice=getComputerChoice(), playerChoice=getPlayerSelectio
     }
 }
 
-
-function game() {
+function playGame(points) {
     let playerScore = 0;
     let cpuScore = 0;
+    let round = 1;
+    let result = '';
 
-    for (let i = 0; i < 5; i++) {
-        result = playGame();
+    /* creates the event function named game for each button
+    note that it is a node list so every node needs to be assigned the event using for each */
+    buttons.forEach(button => button.addEventListener('click', function game(event) {
+        // note that a while loop here is bad because we would be asking for a new loop everytime we click
+        
+        if (playerScore === points || cpuScore === points) {
+            playerScore > cpuScore ? final.textContent = "Player win!" : final.textContent = "CPU win!";
+            /* can use .remove() to get rid of the buttons
+            https://stackoverflow.com/questions/23893872/how-to-properly-remove-event-listeners-in-node-js-eventemitter
+            note that the function needs to be named so the event listener can be located in memory removed*/
+            buttons.forEach(button => button.removeEventListener('click', game));
+            // need to make a return AND have this if statement here or the game still allows the user to click options
+            return 'game over'
+        }
+
+        result = playUsingEventId(event);
         switch (result) {
             case 'win':
                 playerScore += 1;
@@ -113,15 +83,19 @@ function game() {
                 cpuScore += 1;
                 break;
         }
-        console.log(`Round ${i+1}. Player: ${playerScore}, CPU: ${cpuScore}`)
-        console.log(' ')
-    }
-
-    if (playerScore === cpuScore) {
-        return 'Tie!'
-    }
-    return playerScore > cpuScore ? 'You win the game!' : 'You lose the game!'
+        score.textContent = (`Round ${round}. Player: ${playerScore}, CPU: ${cpuScore}`);
+        round += 1;
+    }));
 }
 
-console.log(game())
+function playUsingEventId(event) {
+    return playRound(event.target.getAttribute('id'));
+}
 
+// keep these here of in function?
+const text = document.querySelector('.text');
+const score = document.querySelector('.score');
+const final = document.querySelector('.final');
+const buttons = document.querySelectorAll(".move");
+
+playGame(5);
